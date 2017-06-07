@@ -10,8 +10,9 @@ module.exports = function() {
     // this.socket = {}
     // this.user = {}
 
+    var client = this;
+
     this.initiate = function() {
-        var client = this;
 
         // Send the connection handshake packet to the client
         client.socket.write(packet.build(["HELLO", now().toString()]));
@@ -19,8 +20,7 @@ module.exports = function() {
     }
 
     this.data = function(data) {
-        console.log("Client data: " + data.toString());
-
+        packet.parse(client, data);
     }
 
     this.error = function(error) {

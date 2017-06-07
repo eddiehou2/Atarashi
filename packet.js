@@ -37,6 +37,56 @@ module.exports = packet = {
         var finalPacket = Buffer.concat([size, dataBuffer], size.length + dataBuffer.length);
 
         return finalPacket;
+    },
+
+    // Parse a packet to be handled for a client
+    parse: function(client, data) {
+
+        var index = 0;
+        while (index < data.length) {
+            var packetSize = data.readUInt8(index)
+            var extractedPacket = new Buffer(packetSize);
+            data.copy(extractedPacket, 0, index, index + packetSize);
+
+            this.interpret(client, extractedPacket);
+
+            index += packetSize;
+        }
+
+    },
+
+    interpret: function(client, dataPacket) {
+
+        var header = PacketModels.header.parse(dataPacket);
+        console.log("Interpret: " + header.command);
+
+        switch (header.command.toUpperCase()) {
+            case "LOGIN":
+                var data = PacketModels.login.parse(dataPacket);
+                User.login(data.username, data.password, function(result, user) {
+                   if (result) {
+                       client.user = user;
+                       client.enterRoom(client.user.current_room);
+                       client.socket.write(packet.build(["LOGIN", "TRUE", client.user.current_room, client.user.pox_x, client.user.pox_y, client.user.username]));
+                   }
+                   else {
+                       client.socket.write(packet.build(["LOGIN", "FALSE"]));
+                   }
+                });
+                break;
+            case "REGISTER":
+                var data = PacketModels.register.parse(dataPacket);
+                User.register(data.username, data.password, function(result) {
+                    if (result) {
+                        client.socket.write(packet.build(["REGISTER", "TRUE"]));
+                    }
+                    else {
+                        client.socket.write(packet.build(["REGISTER", "FALSE"]));
+                    }
+                });
+                break;
+        }
+
     }
 
 }
