@@ -5,6 +5,7 @@
 require(__dirname + '/Resources/config.js');
 var fs = require('fs');
 var net = require('net');
+require('./packet.js');
 
 // Load the initializers
 var init_files = fs.readdirSync(__dirname + "/Initializers");
@@ -31,18 +32,16 @@ map_files.forEach(function(mapFile) {
 
 net.createServer(function(socket) {
     console.log("Socket connected");
+    var c_inst = new require('./client.js');
+    var thisClient = new c_inst();
+    thisClient.socket = socket;
+    thisClient.initiate();
 
-    socket.on('error', function(err) {
-        console.log("Socket error: " + error.toString());
-    });
+    socket.on('error', thisClient.error);
 
-    socket.on('end', function() {
-        console.log("Socket closed");
-    });
+    socket.on('end', thisClient.end);
 
-    socket.on('data', function(data) {
-        console.log("Socket data: " + data.toString());
-    });
+    socket.on('data', thisClient.data);
 
 }).listen(config.port);
 
