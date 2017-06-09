@@ -85,6 +85,15 @@ module.exports = packet = {
                     }
                 });
                 break;
+            case "POS":
+                var data = PacketModels.pos.parse(dataPacket);
+                client.user.pos_x = data.target_x;
+                client.user.pos_y = data.target_y;
+                client.user.save();
+                client.broadcastRoom(packet.build(["POS",client.user.username, data.target_x, data.target_y]));
+                console.log(data);
+
+                break;
         }
 
     }
