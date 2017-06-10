@@ -2,8 +2,67 @@
 True open world MMORPG
 
 # Planned Update
-- [ ] Test
-- [x] Test 2
+### Sprint 1 - June 5th - June 11th
+- [x] MongoDB Setup
+- [x] WebStorm Setup
+- [x] GameMaker Studio 2 Setup
+- [x] Server Resource Load (Maps, Models, etc)
+- [x] Server: Network Connection
+- [x] Client: Network Connection
+- [x] Client: Login Page
+- [x] Server: User Model / Register / Login
+- [x] Server: Packet Write / Packet Read
+- [x] Client: Packet Write / Packet Read
+- [x] Client: Tileset
+- [x] Client: Map 1
+- [x] Client: Character Movement
+- [x] Server: Movement Packet Receive / Broadcast
+- [x] Client: Network Character Movement Tracking
+
+### Sprint 2 - June 12th - June 18th
+- [x] Client: Inventory Bar
+- [ ] Server: Inventory Tracking
+- [ ] Client: Skills Bar
+- [ ] Server: Skills Tracking
+- [x] Client: Character Resources (HP, MP, Exp, Level, etc)
+- [x] Server: Character Resources Tracking
+- [ ] Client: Create 20 Items + Interactions
+- [ ] Client: Character Attack Function
+- [ ] Client: Network Character Attack
+- [ ] Server: Attack Packet Receive / Processes / Broadcast
+- [ ] Server: Death / Revive Handling
+- [ ] Client: Death / Revive Handling
+- [ ] Client: Map 2
+- [ ] Client: Equipment / Equip Function
+- [ ] Server: Equipment Tracking
+
+### Sprint 3 - June 19th - June 25th
+- [ ] Client: Attributes Menu
+- [ ] Server: Attributes Tracking
+- [ ] Client: Attributes Points Implementation
+- [ ] Client: Create 5 Skills + Animation
+- [ ] Client: Create 20 (40) Items + Interactions
+- [ ] Client: Map 3
+- [ ] Client: Map 4
+- [ ] Client: Map 5
+- [ ] Client: Create Monster Objects
+- [ ] Client: Monster AI (Movement, simple attack, etc)
+- [ ] Client: Create 2 Monsters
+- [ ] Server: Monster Tracking
+- [ ] Server: Monster Spawning
+
+### Sprint 4 - June 26th - July 3rd
+- [ ] Client: Monster Drop Menu
+- [ ] Client: Money System
+- [ ] Server: Money Tracking
+- [ ] Server: Re-factor Database / Code
+- [ ] Client: Quest System / Menu
+- [ ] Server: Quest / Quest Process Tracking
+- [ ] Client: NPC Characters
+- [ ] Client: NPC Interaction
+- [ ] Client: NPC Shops
+- [ ] Server: NPC Shops Inventory
+- [ ] Client: NPC Shops Inventory
 
 
 # Game Concepts
