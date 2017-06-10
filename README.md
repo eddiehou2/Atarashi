@@ -1,6 +1,13 @@
 # Atarashi
 True open world MMORPG
 
+# Planned Update
+- [ ] Test
+- [x] Test 2
+
+
+# Game Concepts
+
 ## Professions
 #### Adventurer
 1. Mage (Magic, Ranged, Offense)
