@@ -9,7 +9,13 @@ var userSchema = new mongoose.Schema({
     sprite: String,
     current_room: String,
     pos_x: Number,
-    pos_y: Number
+    pos_y: Number,
+    max_hp: Number,
+    cur_hp: Number,
+    max_mp: Number,
+    cur_mp: Number,
+    level: Number,
+    exp: Number
 });
 
 userSchema.statics.register = function(username, password, cb) {
@@ -20,7 +26,13 @@ userSchema.statics.register = function(username, password, cb) {
         sprite: "spr_Hero",
         current_room: maps[config.starting_zone].room,
         pos_x: maps[config.starting_zone].start_x,
-        pos_y: maps[config.starting_zone].start_y
+        pos_y: maps[config.starting_zone].start_y,
+        max_hp: 100,
+        cur_hp: 50,
+        max_mp: 100,
+        cur_mp: 50,
+        level: 1,
+        exp: 0
     });
 
     new_user.save(function(error) {

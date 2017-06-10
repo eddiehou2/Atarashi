@@ -18,6 +18,10 @@ module.exports = PacketModels = {
     pos: new Parser().skip(1)
         .string("command", StringOptions)
         .int32le("target_x", StringOptions)
-        .int32le("target_y", StringOptions)
+        .int32le("target_y", StringOptions),
+    stat: new Parser().skip(1)
+        .string("command", StringOptions)
+        .string("statName", StringOptions)
+        .int32le("newStatValue", StringOptions)
 
 };

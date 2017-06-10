@@ -67,7 +67,7 @@ module.exports = packet = {
                    if (result) {
                        client.user = user;
                        client.enterRoom(client.user.current_room);
-                       client.socket.write(packet.build(["LOGIN", "TRUE", client.user.current_room, client.user.pos_x, client.user.pos_y, client.user.username]));
+                       client.socket.write(packet.build(["LOGIN", "TRUE", client.user.current_room, client.user.pos_x, client.user.pos_y, client.user.username, client.user.max_hp, client.user.cur_hp, client.user.max_mp, client.user.cur_mp, client.user.level, client.user.exp]));
                    }
                    else {
                        client.socket.write(packet.build(["LOGIN", "FALSE"]));
@@ -93,6 +93,30 @@ module.exports = packet = {
                 client.broadcastRoom(packet.build(["POS",client.user.username, data.target_x, data.target_y]));
                 console.log(data);
 
+                break;
+            case "STAT":
+                var data = PacketModels.stat.parse(dataPacket);
+                switch (data.statName) {
+                    case "max_hp":
+                        client.user.max_hp = data.newStatValue;
+                        break;
+                    case "cur_hp":
+                        client.user.cur_hp = data.newStatValue;
+                        break;
+                    case "max_mp":
+                        client.user.max_mp = data.newStatValue;
+                        break;
+                    case "cur_mp":
+                        client.user.cur_mp = data.newStatValue;
+                        break;
+                    case "level":
+                        client.user.level = data.newStatValue;
+                        break;
+                    case "experience":
+                        client.user.exp = data.newStatValue;
+                        break;
+                }
+                client.user.save();
                 break;
         }
 
