@@ -22,6 +22,10 @@ module.exports = PacketModels = {
     stat: new Parser().skip(1)
         .string("command", StringOptions)
         .string("statName", StringOptions)
-        .int32le("newStatValue", StringOptions)
+        .int32le("newStatValue", StringOptions),
+    iattack: new Parser().skip(1)
+        .string("command", StringOptions)
+        .string("username", StringOptions)
+        .int32le("damage", StringOptions)
 
 };

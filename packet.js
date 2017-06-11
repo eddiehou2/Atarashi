@@ -68,6 +68,7 @@ module.exports = packet = {
                        client.user = user;
                        client.enterRoom(client.user.current_room);
                        client.socket.write(packet.build(["LOGIN", "TRUE", client.user.current_room, client.user.pos_x, client.user.pos_y, client.user.username, client.user.max_hp, client.user.cur_hp, client.user.max_mp, client.user.cur_mp, client.user.level, client.user.exp]));
+                       client.broadcastRoom(packet.build(["POS",client.user.username, client.user.pos_x, client.user.pos_y]));
                    }
                    else {
                        client.socket.write(packet.build(["LOGIN", "FALSE"]));
@@ -116,7 +117,55 @@ module.exports = packet = {
                         client.user.exp = data.newStatValue;
                         break;
                 }
-                client.user.save();
+                client.user.save( function(error) {
+                    if (!error) {
+                        client.socket.write(packet.build(["STAT", "TRUE"]));
+                    }
+                    else {
+                        client.socket.write(packet.build(["STAT", "FALSE"]));
+                    }
+                });
+                break;
+            case "ITEM":
+                var data = PacketModels.item.parse(dataPacket);
+                switch (data.action) {
+                    case "+":
+                        Inventory.pickUpItem(client.user, data.invType, data.itemName, data.quantity, function(result) {
+                           if (result) {
+                               client.socket.write(packet.build(["ITEM_PICKUP", "TRUE"]));
+                           }
+                           else {
+                               client.socket.write(packet.build(["ITEM_PICKUP", "FALSE"]));
+                           }
+                        });
+                        break;
+                    case "-":
+                        Inventory.dropItem(client.user, data.invType, data.itemName, data.quantity, function(result) {
+                            if (result) {
+                                client.socket.write(packet.build(["ITEM_DROP", "TRUE"]));
+                            }
+                            else {
+                                client.socket.write(packet.build(["ITEM_DROP", "FALSE"]));
+                            }
+                        });
+                        break;
+                }
+                break;
+            case "IATTACK":
+                var data = PacketModels.iattack.parse(dataPacket);
+                var otherClient = client.findClientByName(data.username);
+                console.log(data.username);
+                otherClient.user.cur_hp -= data.damage;
+                if (otherClient.user.cur_hp <= 0 ) {
+                    otherClient.user.cur_hp = 0;
+                    otherClient.socket.write(packet.build(["IDIE"]));
+                    otherClient.broadcastRoom(packet.build(["UDIE", otherClient.user.username, client.user.username]));
+                }
+                else {
+                    otherClient.socket.write(packet.build(["UATTACK", client.user.username, data.damage, otherClient.user.cur_hp, client.user.cur_hp, client.user.max_hp]));
+                    client.socket.write(packet.build(["IATTACK", "TRUE", data.username, data.damage, otherClient.user.cur_hp, otherClient.user.max_hp]));
+                }
+                otherClient.user.save();
                 break;
         }
 

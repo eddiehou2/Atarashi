@@ -36,6 +36,16 @@ module.exports = function() {
         });
     };
 
+    this.findClientByName = function(clientUsername) {
+        var foundClient;
+        maps[client.user.current_room].clients.forEach(function(otherClient) {
+           if (otherClient.user.username == clientUsername) {
+               foundClient = otherClient;
+           }
+        });
+        return foundClient;
+    };
+
     // Socket stuff
     this.data = function(data) {
         packet.parse(client, data);
@@ -47,6 +57,11 @@ module.exports = function() {
     };
 
     this.end = function() {
+        if (client.user) {
+            client.user.save();
+            var index = maps[client.user.current_room].clients.indexOf(client);
+            maps[client.user.current_room].clients.splice(index, 1);
+        }
         console.log("Client closed");
     };
 };
