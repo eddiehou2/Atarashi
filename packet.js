@@ -64,8 +64,8 @@ module.exports = packet = {
             case "LOGIN":
                 var data = PacketModels.login.parse(dataPacket);
                 User.login(data.username, data.password, function(result, user) {
-                   if (result) {
-                       client.user = user;
+                   client.user = user;
+                   if (result && !client.findClientByName(client.user.username)) {
                        client.enterRoom(client.user.current_room);
                        client.socket.write(packet.build(["LOGIN", "TRUE", client.user.current_room, client.user.pos_x, client.user.pos_y, client.user.username, client.user.max_hp, client.user.cur_hp, client.user.max_mp, client.user.cur_mp, client.user.level, client.user.exp]));
                        client.broadcastRoom(packet.build(["POS",client.user.username, client.user.pos_x, client.user.pos_y]));
@@ -166,6 +166,16 @@ module.exports = packet = {
                     client.socket.write(packet.build(["IATTACK", "TRUE", data.username, data.damage, otherClient.user.cur_hp, otherClient.user.max_hp]));
                 }
                 otherClient.user.save();
+                break;
+            case "REBORN":
+                var data = PacketModels.reborn.parse(dataPacket);
+                client.user.cur_hp = parseInt(client.user.max_hp/2);
+                client.user.cur_mp = parseInt(client.user.max_mp/2);
+                client.user.pos_x = maps[client.user.current_room].start_x;
+                client.user.pos_y = maps[client.user.current_room].start_y;
+                client.user.save();
+                client.socket.write(packet.build(["REBORN", "TRUE", client.user.current_room, client.user.pos_x, client.user.pos_y, client.user.username, client.user.max_hp, client.user.cur_hp, client.user.max_mp, client.user.cur_mp, client.user.level, client.user.exp]));
+                client.broadcastRoom(packet.build(["POS",client.user.username, client.user.pos_x, client.user.pos_y]));
                 break;
         }
 

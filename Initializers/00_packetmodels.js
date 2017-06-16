@@ -26,6 +26,9 @@ module.exports = PacketModels = {
     iattack: new Parser().skip(1)
         .string("command", StringOptions)
         .string("username", StringOptions)
-        .int32le("damage", StringOptions)
+        .int32le("damage", StringOptions),
+    reborn: new Parser().skip(1)
+        .string("command", StringOptions)
+        .string("username", StringOptions)
 
 };

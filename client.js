@@ -37,7 +37,7 @@ module.exports = function() {
     };
 
     this.findClientByName = function(clientUsername) {
-        var foundClient;
+        var foundClient = null;
         maps[client.user.current_room].clients.forEach(function(otherClient) {
            if (otherClient.user.username == clientUsername) {
                foundClient = otherClient;
@@ -53,7 +53,11 @@ module.exports = function() {
 
     this.error = function(error) {
         console.log("Client error: " + error.toString());
-
+        if (client.user) {
+            client.user.save();
+            var index = maps[client.user.current_room].clients.indexOf(client);
+            maps[client.user.current_room].clients.splice(index, 1);
+        }640
     };
 
     this.end = function() {
