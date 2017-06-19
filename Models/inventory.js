@@ -8,28 +8,20 @@ var inventorySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
     },
-    invType: String,
-    items: [{
-        itemName: String,
-        quantity: Number
-    }]
+    itemId: Number,
+    quantity: Number,
+    invCol: Number,
+    invRow: Number
 });
+inventorySchema.index({user: 1, invCol: 1, invRow: 1}, {unique: true});
 
-inventorySchema.statics.pickUpItem = function(user, invType, itemName, quantity, cb) {
+inventorySchema.statics.updateInventory = function(user, invCol, invRow, itemId, quantity, cb) {
 
-    Inventory.findOne({user: user._id, invType: invType}, function(error, inventory) {
-        var updated = false;
-        if (!error && inventory) {
-            inventory.items.forEach(function(item) {
-                if (item.itemName == itemName) {
-                    updated = true;
-                    item.quantity += quantity;
-                }
-            });
-            if (!updated) {
-                inventory.items.push({itemName:itemName, quantity:quantity});
-            }
-            inventory.save(function(error) {
+    Inventory.findOne({user: user._id, invCol: invCol, invRow: invRow}, function(error, inventoryItem) {
+        if (!error && inventoryItem) {
+            inventoryItem.itemId = itemId;
+            inventoryItem.quantity = quantity;
+            inventoryItem.save(function(error) {
                 if (!error) {
                     cb(true);
                 }
@@ -39,44 +31,33 @@ inventorySchema.statics.pickUpItem = function(user, invType, itemName, quantity,
             });
         }
         else {
-            // Error || User doesn't exist
-            cb(false);
+            var new_inventoryItem = new Inventory({
+                user: user._id,
+                itemId: itemId,
+                quantity: quantity,
+                invCol: invCol,
+                invRow: invRow
+            });
+            new_inventoryItem.save(function(error) {
+               if (!error) {
+                   cb(true);
+               }
+               else {
+                   cb(false);
+               }
+            });
         }
     });
 
 };
 
-inventorySchema.statics.dropItem = function(user, invType, itemName, quantity, cb) {
+inventorySchema.statics.retrieveAll = function(user, cb) {
 
-    Inventory.findOne({user: user._id, invType: invType}, function(error, inventory) {
-        if (!error && inventory) {
-            var newInventoryItems = [];
-            inventory.items.forEach(function(item) {
-                if (item.itemName != itemName) {
-                    newInventoryItems.push(item);
-                }
-                else if (item.itemName == itemName && item.quantity > 1) {
-                    item.quantity -= 1;
-                    newInventoryItems.push(item);
-                }
-            });
-            inventory.items = newInventoryItems;
-
-            inventory.save(function(error) {
-                if (!error) {
-                    cb(true);
-                }
-                else {
-                    cb(false);
-                }
-            });
-        }
-        else {
-            // Error || User doesn't exist
-            cb(false);
+    Inventory.find({user: user._id}, function(error, inventoryItems) {
+        if (!error && inventoryItems) {
+            cb(inventoryItems);
         }
     });
-
 
 };
 

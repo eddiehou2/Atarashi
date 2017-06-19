@@ -29,6 +29,12 @@ module.exports = PacketModels = {
         .int32le("damage", StringOptions),
     reborn: new Parser().skip(1)
         .string("command", StringOptions)
-        .string("username", StringOptions)
+        .string("username", StringOptions),
+    item: new Parser().skip(1)
+        .string("command", StringOptions)
+        .int32le("invCol", StringOptions)
+        .int32le("invRow", StringOptions)
+        .int32le("itemId", StringOptions)
+        .int32le("quantity", StringOptions)
 
 };

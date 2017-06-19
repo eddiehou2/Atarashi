@@ -128,28 +128,27 @@ module.exports = packet = {
                 break;
             case "ITEM":
                 var data = PacketModels.item.parse(dataPacket);
-                switch (data.action) {
-                    case "+":
-                        Inventory.pickUpItem(client.user, data.invType, data.itemName, data.quantity, function(result) {
-                           if (result) {
-                               client.socket.write(packet.build(["ITEM_PICKUP", "TRUE"]));
-                           }
-                           else {
-                               client.socket.write(packet.build(["ITEM_PICKUP", "FALSE"]));
-                           }
+                Inventory.updateInventory(client.user, data.invCol, data.invRow, data.itemId, data.quantity, function(result) {
+                   if (result) {
+                       client.socket.write(packet.build(["ITEM", "TRUE"]));
+                   }
+                   else {
+                       client.socket.write(packet.build(["ITEM", "FALSE"]));
+                   }
+                });
+
+                break;
+            case "INVENTORY":
+                Inventory.retrieveAll(client.user,function(inventoryItems) {
+                    if (inventoryItems) {
+                        inventoryItems.forEach(function(inventoryItem) {
+                            client.socket.write(packet.build(["INVENTORY", inventoryItem.invCol, inventoryItem.invRow, inventoryItem.itemId, inventoryItem.quantity]));
                         });
-                        break;
-                    case "-":
-                        Inventory.dropItem(client.user, data.invType, data.itemName, data.quantity, function(result) {
-                            if (result) {
-                                client.socket.write(packet.build(["ITEM_DROP", "TRUE"]));
-                            }
-                            else {
-                                client.socket.write(packet.build(["ITEM_DROP", "FALSE"]));
-                            }
-                        });
-                        break;
-                }
+                    }
+                    else {
+                        // nothing right now
+                    }
+                });
                 break;
             case "IATTACK":
                 var data = PacketModels.iattack.parse(dataPacket);
