@@ -35,6 +35,10 @@ module.exports = PacketModels = {
         .int32le("invCol", StringOptions)
         .int32le("invRow", StringOptions)
         .int32le("itemId", StringOptions)
-        .int32le("quantity", StringOptions)
+        .int32le("quantity", StringOptions),
+    equipment: new Parser().skip(1)
+        .string("command", StringOptions)
+        .int32le("itemId", StringOptions)
+        .int32le("slot", StringOptions)
 
 };

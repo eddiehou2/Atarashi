@@ -150,6 +150,26 @@ module.exports = packet = {
                     }
                 });
                 break;
+            case "EQUIPMENT_CHANGE":
+                var data = PacketModels.equipment.parse(dataPacket);
+                Equipment.updateEquipment(client.user, data.slot, data.itemId, function(result) {
+                    if (result) {
+                        client.socket.write(packet.build(["EQUIPMENT_CHANGE", "TRUE"]));
+                    }
+                    else {
+                        client.socket.write(packet.build(["EQUIPMENT_CHANGE", "FALSE"]));
+                    }
+                });
+                break;
+            case "EQUIPMENT_RETRIEVAL":
+                Equipment.retrieveAll(client.user, function(equipmentItems) {
+                   if (equipmentItems) {
+                       equipmentItems.forEach(function(equipmentItem) {
+                          client.socket.write(packet.build(["EQUIPMENT_RETRIEVAL", equipmentItem.slot, equipmentItem.itemId]));
+                       });
+                   }
+                });
+                break;
             case "IATTACK":
                 var data = PacketModels.iattack.parse(dataPacket);
                 var otherClient = client.findClientByName(data.username);
